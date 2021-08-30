@@ -98,8 +98,46 @@ const RootQuery = new GraphQLObjectType({
   }),
 });
 
+//Defining mutations
+const RootMutationType = new GraphQLObjectType({
+  name: "Mutation",
+  description: "Root Mutation",
+  fields: () => ({
+    addMember: {
+      type: memberType,
+      description: "Add a member",
+      args: {
+        name: { type: GraphQLNonNull(GraphQLString) },
+        teamId: { type: GraphQLNonNull(GraphQLInt) },
+      },
+      resolve: (_, args) => {
+        const member = {
+          id: members.length + 1,
+          name: args.name,
+          teamId: args.teamId,
+        };
+        members.push(member);
+        return member;
+      },
+    },
+    addTeam: {
+      type: teamType,
+      description: "Add a team",
+      args: {
+        name: { type: GraphQLNonNull(GraphQLString) },
+      },
+      resolve: (_, args) => {
+        const team = { id: teams.length + 1, name: args.name };
+        teams.push(team);
+        return team;
+      },
+    },
+  }),
+});
+
 const schema = new GraphQLSchema({
   query: RootQuery,
+  mutation: RootMutationType,
 });
 
 app.use(
